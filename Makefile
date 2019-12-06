@@ -16,7 +16,7 @@ FROM ?= Big5-ZhuYin.map
 TO ?= ZhuYin-Big5.map
 .PHONY: all clean map
 
-$(TARGET): $(SRC_PATH)/$(OBJ) -loolm -ldstruct -lmisc
+$(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o: %.cpp
