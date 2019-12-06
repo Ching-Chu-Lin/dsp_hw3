@@ -11,8 +11,8 @@
 
 using namespace std;
 
-#define	WORD_MAX	5000
-#define	SEN_MAXLEN	500
+#define	WORD_MAX	3000
+#define	SEN_MAXLEN	100
 
 
 Vocab voc;
@@ -33,11 +33,9 @@ double Bigram_Prob(const char *w1, const char *w2, Ngram &lm, Vocab &voc){
 }
 
 void Decode( ofstream &output_file, string &line){	//Viterbi algorithm
-	cout << "where is segmentation fault" << endl;
 	double delta[SEN_MAXLEN][WORD_MAX] = {{0.0}};		
 	int backtrac_table[SEN_MAXLEN][WORD_MAX] = {{0}};	
 
-	cout << "where is segmentation fault" << endl;
 
 	// initialize
 	string zhuyin; zhuyin.assign( line.begin(), line.begin()+2);
@@ -45,8 +43,8 @@ void Decode( ofstream &output_file, string &line){	//Viterbi algorithm
 	for( int i = 0 ; i < N; i++)
 		delta[0][i] = Bigram_Prob( "<s>", mapping[zhuyin][i].c_str(), lm, voc);
 	int preN = N; string prev_zhuyin = zhuyin; 
+	//init success
 
-	cout << "before cal: where is segmentation fault" << endl;
 	//cal delta & record back track
 	for( int t = 1 ; t < line.size()/2 ; t++){ //at word t (2t)
 		zhuyin.assign( line.begin()+2*t, line.begin()+2*t+2);
@@ -62,27 +60,28 @@ void Decode( ofstream &output_file, string &line){	//Viterbi algorithm
 		}
 		preN = N; prev_zhuyin = zhuyin;
 	}
-
 	//last word
 	int max_idx; double max_prob = 0.0;
 	for( int i = 0 ; i < preN ; i++){
 		double current_prob = Bigram_Prob( mapping[prev_zhuyin][i].c_str(), "</s>", lm, voc) + delta[line.size()/2-1][i];
 		if( current_prob > max_prob ){ max_prob = current_prob; max_idx = i;}
 	}
-
+	//dp success
 	
 	//backtracking & output
-	vector<string> decoded;
-	for( int t = line.size()/2-1 ; t >= 0; t--){
+	vector<string> decoded_sentense;
+	for( int t = line.size()/2-1 ; t >= 1 ; t--){
 		zhuyin.assign( line.begin()+2*t, line.begin()+2*t+2);
-		decoded.push_back( mapping[zhuyin][max_idx]);
+
+		if( mapping[zhuyin].size() != 0 ) decoded_sentense.push_back( mapping[zhuyin][max_idx]);
+		else decoded_sentense.push_back( zhuyin);
+
 		if( t > 0 ) max_idx = backtrac_table[t][max_idx];
 	}
-	//reverse( decoded.begin(), decoded.end());
-	output_file << "where is segmentation fault" << endl;
+	//reverse( decoded_sentense.begin(), decoded_sentense.end());
 	output_file << "<s>";
-	for (int i = decoded.size()-1 ; i >= 0 ; i--){
-		output_file << " " << decoded[i];
+	for( int i = decoded_sentense.size()-1 ; i >= 0 ; i--){
+		output_file << " " << decoded_sentense[i];
 	}
 	output_file << " </s>" << endl;
 
@@ -129,9 +128,8 @@ int main( int argc, char* argv[]){
 
 		//can done this
 		//decode ZhuYin
-		cout << line << endl;
 		Decode( output_file, line);
-		cout << "after decode: where is segmentation fault" << endl;
+		//cout << "after decode: where is segmentation fault" << endl;
 	}
 
 	decode_file.close(); output_file.close();
