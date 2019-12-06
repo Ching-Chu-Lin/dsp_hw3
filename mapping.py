@@ -17,6 +17,10 @@ for line in lines[:-1]:
 	elements = re.findall(r"[\w']+", line);
 	ChineseChar = elements[0]
 
+	if ChineseChar not in mapping:
+		mapping[ChineseChar] = set()
+		mapping[ChineseChar].add(ChineseChar)
+		
 	for zhuyin in elements[1:]:
 		#print(zhuyin)
 		if zhuyin[0] not in mapping:
