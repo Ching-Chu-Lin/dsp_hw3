@@ -16,7 +16,7 @@ FROM ?= Big5-ZhuYin.map
 TO ?= ZhuYin-Big5.map
 .PHONY: all clean map
 
-$(TARGET): $(OBJ) -loolm -ldstruct -lmisc
+$(TARGET): $(SRC_PATH)/$(OBJ) -loolm -ldstruct -lmisc
 	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o: %.cpp
@@ -25,7 +25,7 @@ $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 all: $(TARGET)
 
 map:
-	python3 mapping.py $(FROM) $(TO)
+	python3 $(SRC_PATH)/mapping.py $(FROM) $(TO)
 
 lanmodel:
 	perl separator_big5.pl corpus.txt > segmented.txt
