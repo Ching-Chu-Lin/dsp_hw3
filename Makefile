@@ -31,7 +31,6 @@ lanmodel:
 	perl separator_big5.pl corpus.txt > segmented.txt
 	ngram-count -text segmented.txt -write countfile.txt -order 2 
 	ngram-count -read countfile.txt -lm lanmodel.lm -order 2 -unk	
-	chmod 755 lanmodel.lm
 	rm -f segmented.txt countfile.txt
 
 clean:
